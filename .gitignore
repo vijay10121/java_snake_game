@@ -1,0 +1,4 @@
+bin/
+*.class
+snake_highscore.dat
+.DS_Store
