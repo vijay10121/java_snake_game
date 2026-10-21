@@ -333,7 +333,16 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.fill();
 }
 
-// Input Handlers
+// Direction helper
+function changeDirection(newDir) {
+  if (paused || gameOver) return;
+  if (newDir === 'U' && direction !== 'D') nextDirection = 'U';
+  if (newDir === 'D' && direction !== 'U') nextDirection = 'D';
+  if (newDir === 'L' && direction !== 'R') nextDirection = 'L';
+  if (newDir === 'R' && direction !== 'L') nextDirection = 'R';
+}
+
+// Input Handlers - Keyboard
 window.addEventListener('keydown', e => {
   const key = e.key;
   if (key === ' ' || key.toLowerCase() === 'p') {
@@ -348,16 +357,69 @@ window.addEventListener('keydown', e => {
 
   if (paused || gameOver) return;
 
-  if ((key === 'ArrowUp' || key.toLowerCase() === 'w') && direction !== 'D') {
-    nextDirection = 'U';
-  } else if ((key === 'ArrowDown' || key.toLowerCase() === 's') && direction !== 'U') {
-    nextDirection = 'D';
-  } else if ((key === 'ArrowLeft' || key.toLowerCase() === 'a') && direction !== 'R') {
-    nextDirection = 'L';
-  } else if ((key === 'ArrowRight' || key.toLowerCase() === 'd') && direction !== 'L') {
-    nextDirection = 'R';
-  }
+  if (key === 'ArrowUp' || key.toLowerCase() === 'w') changeDirection('U');
+  else if (key === 'ArrowDown' || key.toLowerCase() === 's') changeDirection('D');
+  else if (key === 'ArrowLeft' || key.toLowerCase() === 'a') changeDirection('L');
+  else if (key === 'ArrowRight' || key.toLowerCase() === 'd') changeDirection('R');
 });
+
+// Mobile On-Screen D-Pad Buttons
+const dpadUp = document.getElementById('dpad-up');
+const dpadDown = document.getElementById('dpad-down');
+const dpadLeft = document.getElementById('dpad-left');
+const dpadRight = document.getElementById('dpad-right');
+
+function bindDpad(btn, dir) {
+  if (!btn) return;
+  const handler = e => {
+    e.preventDefault();
+    changeDirection(dir);
+  };
+  btn.addEventListener('pointerdown', handler);
+}
+
+bindDpad(dpadUp, 'U');
+bindDpad(dpadDown, 'D');
+bindDpad(dpadLeft, 'L');
+bindDpad(dpadRight, 'R');
+
+// Touch Swipe Detection on Canvas
+let touchStartX = 0;
+let touchStartY = 0;
+
+canvas.addEventListener('touchstart', e => {
+  if (e.touches.length > 0) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }
+}, { passive: true });
+
+canvas.addEventListener('touchmove', e => {
+  // Prevent page scroll when swiping on the game board
+  e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+  if (e.changedTouches.length === 0) return;
+  const touchEndX = e.changedTouches[0].clientX;
+  const touchEndY = e.changedTouches[0].clientY;
+
+  const dx = touchEndX - touchStartX;
+  const dy = touchEndY - touchStartY;
+  const absDx = Math.abs(dx);
+  const absDy = Math.abs(dy);
+
+  // Minimum swipe distance threshold (25px)
+  if (Math.max(absDx, absDy) > 25) {
+    if (absDx > absDy) {
+      // Horizontal swipe
+      changeDirection(dx > 0 ? 'R' : 'L');
+    } else {
+      // Vertical swipe
+      changeDirection(dy > 0 ? 'D' : 'U');
+    }
+  }
+}, { passive: true });
 
 pauseBtn.addEventListener('click', togglePause);
 restartBtn.addEventListener('click', initGame);

@@ -344,19 +344,116 @@ body {
   font-style: normal;
 }
 
-@media (max-width: 680px) {
-  .game-header, .game-footer {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
-  }
-  .score-board {
-    justify-content: center;
-  }
-  .header-actions {
-    justify-content: center;
-  }
-  .settings-group {
-    justify-content: center;
-  }
+#game-canvas {
+  touch-action: none;
 }
+
+  /* Mobile Virtual D-Pad */
+  .mobile-controls {
+    display: none;
+    margin-top: 14px;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .dpad-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .dpad-middle {
+    align-items: center;
+  }
+
+  .dpad-center {
+    width: 58px;
+    height: 58px;
+  }
+
+  .dpad-btn {
+    width: 62px;
+    height: 62px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #141414;
+    background-color: #ffffff;
+    border: 2px solid #b0c0d5;
+    border-radius: 14px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    transition: transform 0.08s ease, background-color 0.08s ease;
+  }
+
+  .dpad-btn:active {
+    background-color: #2680eb;
+    color: #ffffff;
+    transform: scale(0.92);
+  }
+
+  @media (max-width: 680px) {
+    body {
+      padding: 8px;
+    }
+
+    .game-container {
+      border-radius: 12px;
+    }
+
+    .game-header, .game-footer {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+      padding: 12px 14px;
+    }
+
+    .score-board {
+      justify-content: center;
+    }
+
+    .header-actions {
+      justify-content: center;
+    }
+
+    .settings-group {
+      justify-content: center;
+    }
+
+    .board-wrapper {
+      padding: 8px;
+    }
+
+    .canvas-card {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #game-canvas {
+      width: 100%;
+      max-width: 380px;
+      height: auto;
+      aspect-ratio: 1 / 1;
+    }
+
+    .mobile-controls {
+      display: flex;
+    }
+  }
+
+  /* Show D-pad on touch screens regardless of orientation if narrow */
+  @media (pointer: coarse) {
+    .mobile-controls {
+      display: flex;
+    }
+  }
+
